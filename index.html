@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>VanBerto's — Jogos</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky-top: #a8d8ff;
+  --sky-mid: #c4e8ff;
+  --sky-bot: #e8f7ff;
+  --card1: #fff7ed;
+  --card1b: #f97316;
+  --card2: #f0fdf4;
+  --card2b: #22c55e;
+  --card3: #f0fdf4;
+  --card3b: #84cc16;
+  --card4: #fff0f6;
+  --card4b: #ec4899;
+  --ink: #1a1a2e;
+  --font-head: 'Baloo 2', cursive;
+  --font-body: 'Quicksand', sans-serif;
+  --shadow: 0 8px 32px rgba(30,60,120,.13);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; overscroll-behavior: none; user-select: none; -webkit-user-select: none; }
+
+body {
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #b3d9f7;
+}
+
+/* ── SKY SCENE ── */
+.sky-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg,
+    #a8d5f5 0%, #c2e4fa 40%, #daeffe 70%, #eef7ff 100%);
+  overflow: hidden;
+}
+
+/* Sun */
+.sun {
+  position: absolute;
+  top: 6%;
+  right: 10%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #ffe87a, #ffcc00 55%, #ffaa00);
+  box-shadow: 0 0 0 14px rgba(255,220,50,.18), 0 0 0 28px rgba(255,200,30,.10), 0 0 60px rgba(255,180,0,.3);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%,100% { box-shadow: 0 0 0 14px rgba(255,220,50,.18), 0 0 0 28px rgba(255,200,30,.10), 0 0 60px rgba(255,180,0,.3); }
+  50%      { box-shadow: 0 0 0 20px rgba(255,220,50,.22), 0 0 0 38px rgba(255,200,30,.12), 0 0 80px rgba(255,200,0,.35); }
+}
+
+/* Clouds */
+.cloud {
+  position: absolute;
+  border-radius: 50px;
+  background: rgba(255,255,255,.92);
+  filter: blur(1px);
+  animation: cloudDrift linear infinite;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,.92);
+  border-radius: 50%;
+}
+.c1 { width:120px; height:36px; top:12%; left:-140px; animation-duration:38s; animation-delay:-12s; }
+.c1::before { width:56px; height:56px; top:-24px; left:16px; }
+.c1::after  { width:40px; height:40px; top:-16px; left:54px; }
+
+.c2 { width:90px; height:28px; top:22%; left:-110px; animation-duration:52s; animation-delay:-30s; opacity:.75; }
+.c2::before { width:44px; height:44px; top:-20px; left:12px; }
+.c2::after  { width:32px; height:32px; top:-12px; left:44px; }
+
+.c3 { width:160px; height:42px; top:7%; left:-180px; animation-duration:44s; animation-delay:-5s; opacity:.6; }
+.c3::before { width:64px; height:64px; top:-28px; left:22px; }
+.c3::after  { width:50px; height:50px; top:-20px; left:72px; }
+
+@keyframes cloudDrift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(100vw + 200px)); }
+}
+
+/* Birds */
+.bird {
+  position: absolute;
+  font-size: 1.4rem;
+  animation: birdFly linear infinite;
+  opacity: .7;
+  filter: grayscale(.3);
+}
+@keyframes birdFly {
+  from { transform: translateX(-60px) scaleX(-1); }
+  to   { transform: translateX(calc(100vw + 60px)) scaleX(-1); }
+}
+
+/* Grass / ground stripe */
+.ground {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 72px;
+  z-index: 1;
+  background: linear-gradient(180deg, #6ec86e 0%, #4aad4a 45%, #38903a 100%);
+  border-top: 4px solid #2d7a2d;
+  box-shadow: 0 -4px 0 #5dc45d;
+}
+.ground::before {
+  content: '';
+  position: absolute;
+  top: -14px; left: 0; right: 0;
+  height: 18px;
+  background: radial-gradient(ellipse 22px 18px at 50% 100%, #6ec86e 99%, transparent 100%) repeat-x;
+  background-size: 30px 18px;
+}
+
+/* Flowers on ground */
+.flowers {
+  position: fixed;
+  bottom: 68px;
+  left: 0; right: 0;
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  gap: 18px;
+  padding: 0 10px;
+  justify-content: space-around;
+}
+.flower { font-size: 1.5rem; animation: flowerSway 3s ease-in-out infinite; }
+.flower:nth-child(2) { animation-delay: -.6s; }
+.flower:nth-child(3) { animation-delay: -1.2s; }
+.flower:nth-child(4) { animation-delay: -.3s; }
+.flower:nth-child(5) { animation-delay: -1.8s; }
+.flower:nth-child(6) { animation-delay: -.9s; }
+.flower:nth-child(7) { animation-delay: -2.4s; }
+.flower:nth-child(8) { animation-delay: -0.15s; }
+@keyframes flowerSway {
+  0%,100% { transform: rotate(-5deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+/* Stars/sparkles floating */
+.sparkle {
+  position: fixed;
+  opacity: .6;
+  pointer-events: none;
+  animation: sparkleDrift linear infinite;
+  z-index: 1;
+  font-size: 1.6rem;
+}
+@keyframes sparkleDrift {
+  from { transform: translateX(-100px) rotate(0deg) scale(.8); }
+  to   { transform: translateX(calc(100vw + 100px)) rotate(360deg) scale(1.1); }
+}
+
+/* ── HEADER ── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 40%, #7dd3fc 70%, #a5f3fc 100%);
+  border-bottom: 4px solid rgba(255,255,255,.5);
+  box-shadow: 0 4px 24px rgba(14,165,233,.35);
+  padding: .6rem 1rem .55rem;
+  text-align: center;
+  overflow: hidden;
+}
+/* shimmer sweep */
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
+  animation: headerShimmer 3.5s ease-in-out infinite;
+}
+@keyframes headerShimmer {
+  0%   { transform: translateX(-100%); }
+  60%,100% { transform: translateX(150%); }
+}
+.hd-inner { position: relative; z-index: 1; }
+.hd-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+}
+header h1 {
+  font-family: var(--font-head);
+  font-size: clamp(1.7rem, 5.5vw, 2.5rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 0 rgba(0,0,0,.15), 0 4px 16px rgba(0,80,180,.2);
+}
+.hd-robot {
+  height: clamp(34px, 6vw, 50px);
+  width: auto;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.8));
+  animation: vbFloat 3.2s ease-in-out infinite;
+}
+.hd-sub {
+  font-size: clamp(.85rem, 2.5vw, 1.05rem);
+  color: rgba(255,255,255,.95);
+  font-weight: 800;
+  margin-top: .15rem;
+  letter-spacing: .3px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+.hd-pill {
+  display: inline-block;
+  background: rgba(255,255,255,.25);
+  border-radius: 50px;
+  padding: 1px 7px;
+  font-size: .9em;
+}
+.hd-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: .4rem;
+}
+.hd-tags span {
+  font-family: var(--font-head);
+  font-size: clamp(.7rem, 2vw, .8rem);
+  font-weight: 800;
+  background: rgba(255,255,255,.28);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,.5);
+  border-radius: 50px;
+  padding: 3px 10px;
+  letter-spacing: .3px;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+/* ── MAIN ── */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .8rem;
+  padding: 1.2rem .8rem 9rem;
+  position: relative;
+  z-index: 5;
+}
+
+/* ── ROBOT CENTRAL ── */
+.robot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: .2rem 0 .2rem;
+}
+
+.bubble {
+  position: relative;
+  background: linear-gradient(135deg, #eef8ff, #fff);
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  padding: 10px 16px 9px;
+  box-shadow: 4px 4px 0 var(--ink), var(--shadow);
+  font-family: var(--font-head);
+  font-size: clamp(.82rem, 2.5vw, 1rem);
+  font-weight: 700;
+  color: var(--ink);
+  max-width: 210px;
+  min-width: 155px;
+  text-align: center;
+  pointer-events: none;
+  margin-bottom: 12px;
+  animation: bubblePop 3s ease-in-out infinite alternate;
+}
+/* Bubble tail pointing DOWN */
+.bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -17px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 17px solid var(--ink);
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  bottom: -10px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid #eef8ff;
+  z-index: 1;
+}
+
+@keyframes bubblePop {
+  from { transform: scale(1) rotate(-.5deg); }
+  to   { transform: scale(1.04) rotate(.8deg); }
+}
+
+#robot-svg {
+  width: clamp(88px, 14vw, 118px);
+  cursor: pointer;
+  animation: vbFloat 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 16px rgba(56,189,248,.4));
+  transition: filter .2s;
+}
+#robot-svg:hover { filter: drop-shadow(0 6px 28px rgba(56,189,248,.7)); }
+#robot-svg.bounce { animation: robotPop .65s cubic-bezier(.34,1.56,.64,1), vbFloat 3.2s ease-in-out .65s infinite; }
+
+.vb-eyelid { transform-origin: 40px 23px; animation: vbBlink 5s ease-in-out infinite; }
+#vb-arm    { transform-origin: 65px 37px; animation: waveVB 1.5s ease-in-out infinite; }
+
+@keyframes vbFloat   { 0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)} }
+@keyframes vbBlink   { 0%,90%,100%{transform:scaleY(0)}95%{transform:scaleY(1)} }
+@keyframes waveVB    { 0%,100%{transform:rotate(0)}25%,75%{transform:rotate(-20deg)} }
+@keyframes robotPop  { 0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-20px) rotate(-6deg)}70%{transform:translateY(-9px) rotate(5deg)} }
+
+/* ── GAMES GRID ── */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 540px;
+}
+
+.game-card {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  padding: 1.25rem 1rem 1.1rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 3px solid transparent;
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
+  cursor: pointer;
+  animation: cardIn .55s cubic-bezier(.34,1.56,.64,1) both;
+  overflow: hidden;
+}
+
+/* Colored bottom accent bar */
+.game-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 5px;
+  border-radius: 0 0 22px 22px;
+  transition: height .18s;
+}
+
+.game-card:nth-child(1) {
+  animation-delay: .06s;
+  background: var(--card1);
+  border-color: #fb923c;
+  box-shadow: 0 8px 0 #fb923c, var(--shadow);
+}
+.game-card:nth-child(1)::after { background: #fb923c; }
+
+.game-card:nth-child(2) {
+  animation-delay: .12s;
+  background: var(--card2);
+  border-color: #22c55e;
+  box-shadow: 0 8px 0 #22c55e, var(--shadow);
+}
+.game-card:nth-child(2)::after { background: #22c55e; }
+
+.game-card:nth-child(3) {
+  animation-delay: .18s;
+  background: var(--card3);
+  border-color: #84cc16;
+  box-shadow: 0 8px 0 #84cc16, var(--shadow);
+}
+.game-card:nth-child(3)::after { background: #84cc16; }
+
+.game-card:nth-child(4) {
+  animation-delay: .24s;
+  background: var(--card4);
+  border-color: #ec4899;
+  box-shadow: 0 8px 0 #ec4899, var(--shadow);
+}
+.game-card:nth-child(4)::after { background: #ec4899; }
+
+@keyframes cardIn {
+  from { transform: translateY(24px) scale(.88); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.game-card:hover {
+  transform: translateY(-7px) scale(1.03);
+}
+.game-card:nth-child(1):hover { box-shadow: 0 14px 0 #fb923c, 0 20px 40px rgba(251,146,60,.25); }
+.game-card:nth-child(2):hover { box-shadow: 0 14px 0 #22c55e, 0 20px 40px rgba(34,197,94,.22); }
+.game-card:nth-child(3):hover { box-shadow: 0 14px 0 #84cc16, 0 20px 40px rgba(132,204,22,.22); }
+.game-card:nth-child(4):hover { box-shadow: 0 14px 0 #ec4899, 0 20px 40px rgba(236,72,153,.22); }
+
+.game-card:active { transform: translateY(2px) scale(.98); }
+.game-card:nth-child(1):active { box-shadow: 0 3px 0 #fb923c; }
+.game-card:nth-child(2):active { box-shadow: 0 3px 0 #22c55e; }
+.game-card:nth-child(3):active { box-shadow: 0 3px 0 #84cc16; }
+.game-card:nth-child(4):active { box-shadow: 0 3px 0 #ec4899; }
+
+.game-icon {
+  font-size: clamp(2.6rem, 7vw, 3.2rem);
+  line-height: 1;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.14));
+  animation: iconBob 2.8s ease-in-out infinite;
+}
+.game-card:nth-child(2) .game-icon { animation-delay: -.7s; }
+.game-card:nth-child(3) .game-icon { animation-delay: -1.4s; }
+.game-card:nth-child(4) .game-icon { animation-delay: -2.1s; }
+@keyframes iconBob {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-5px) rotate(3deg); }
+}
+
+.game-title {
+  font-family: var(--font-head);
+  font-size: clamp(13px, 3.1vw, 15px);
+  font-weight: 900;
+  line-height: 1.25;
+  text-align: center;
+  letter-spacing: -.2px;
+}
+.game-card:nth-child(1) .game-title { color: #9a3412; }
+.game-card:nth-child(2) .game-title { color: #14532d; }
+.game-card:nth-child(3) .game-title { color: #3a5c10; }
+.game-card:nth-child(4) .game-title { color: #831843; }
+
+.game-desc {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #7a8a9a;
+  text-align: center;
+  line-height: 1.45;
+}
+
+.play-btn {
+  margin-top: 6px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  padding: 7px 24px;
+  border-radius: 50px;
+  border: 3px solid var(--ink);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 3px 4px 0 var(--ink);
+  transition: transform .12s, box-shadow .12s;
+  background: none;
+}
+.game-card:nth-child(1) .play-btn { background: linear-gradient(135deg, #fb923c, #f97316); }
+.game-card:nth-child(2) .play-btn { background: linear-gradient(135deg, #4ade80, #22c55e); }
+.game-card:nth-child(3) .play-btn { background: linear-gradient(135deg, #a3e635, #84cc16); }
+.game-card:nth-child(4) .play-btn { background: linear-gradient(135deg, #f472b6, #ec4899); }
+
+.play-btn:hover  { transform: translateY(-2px); box-shadow: 3px 6px 0 var(--ink); }
+.play-btn:active { transform: translateY(1px);  box-shadow: 2px 2px 0 var(--ink); }
+
+/* ── TITLE BADGE ── */
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(.85rem, 2.5vw, 1rem);
+  font-weight: 800;
+  color: #3b6ea8;
+  background: rgba(255,255,255,.75);
+  backdrop-filter: blur(8px);
+  border-radius: 50px;
+  padding: 5px 18px;
+  border: 2px solid rgba(255,255,255,.9);
+  box-shadow: var(--shadow);
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+/* ── SIGNATURE ── */
+.signature {
+  font-size: .72rem;
+  color: rgba(60,90,130,.55);
+  font-weight: 700;
+  letter-spacing: .6px;
+  margin-top: .4rem;
+  background: rgba(255,255,255,.5);
+  padding: 4px 14px;
+  border-radius: 50px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 380px) {
+  .games-grid { gap: 10px; }
+  .game-card  { padding: 1rem .75rem .95rem; }
+  .bubble     { max-width: 175px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sky scene -->
+<div class="sky-scene">
+  <div class="sun"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="bird" style="top:9%;font-size:1.2rem;animation-duration:18s;animation-delay:-4s">🐦</div>
+  <div class="bird" style="top:16%;font-size:1rem;animation-duration:25s;animation-delay:-12s">🐦</div>
+  <div class="bird" style="top:13%;font-size:.9rem;animation-duration:22s;animation-delay:-8s">🐦</div>
+</div>
+
+<!-- Floating sparkles -->
+<div class="sparkle" style="top:10%;animation-duration:28s;animation-delay:-6s">⭐</div>
+<div class="sparkle" style="top:25%;font-size:1.2rem;animation-duration:36s;animation-delay:-18s">✨</div>
+<div class="sparkle" style="top:40%;font-size:2rem;animation-duration:44s;animation-delay:-28s">🌟</div>
+
+<!-- Ground strip -->
+<div class="ground"></div>
+<div class="flowers">
+  <span class="flower">🌸</span>
+  <span class="flower">🌼</span>
+  <span class="flower">🌺</span>
+  <span class="flower">🌻</span>
+  <span class="flower">🌸</span>
+  <span class="flower">🌼</span>
+  <span class="flower">🌺</span>
+  <span class="flower">🌻</span>
+</div>
+
+<header>
+  <div class="hd-inner">
+    <div class="hd-title-row">
+      <svg class="hd-robot" aria-label="VanBerto" role="img" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e5f2ff"/><stop offset="100%" stop-color="#bfdbfe"/></linearGradient>
+          <linearGradient id="hvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient>
+        </defs>
+        <circle cx="40" cy="40" r="34" fill="rgba(147,197,253,0.28)"/>
+        <rect x="18" y="30" width="44" height="32" rx="14" fill="url(#hbg)"/>
+        <circle cx="40" cy="46" r="7" fill="#9ca3af"/>
+        <rect x="22" y="10" width="36" height="26" rx="13" fill="url(#hbg)"/>
+        <rect x="26" y="15" width="28" height="16" rx="8" fill="url(#hvg)"/>
+        <circle cx="33" cy="23" r="2.5" fill="#0f172a"/><circle cx="47" cy="23" r="2.5" fill="#0f172a"/>
+        <circle cx="34.2" cy="21.5" r="1" fill="white" opacity="0.8"/><circle cx="48.2" cy="21.5" r="1" fill="white" opacity="0.8"/>
+        <line x1="40" y1="10" x2="40" y2="4" stroke="#38bdf8" stroke-width="2"/><circle cx="40" cy="3" r="2.5" fill="#38bdf8"/>
+        <rect x="12" y="34" width="6" height="20" rx="3" fill="#e5e7eb"/>
+        <rect x="62" y="34" width="6" height="20" rx="3" fill="#e5e7eb"/>
+        <rect x="22" y="58" width="12" height="8" rx="3" fill="#1f2937"/><rect x="46" y="58" width="12" height="8" rx="3" fill="#1f2937"/>
+      </svg>
+      <h1>VanBerto's</h1>
+    </div>
+    <p class="hd-sub"><span class="hd-pill">🌍</span> O Mundo à Minha Volta! <span class="hd-pill">🏡</span></p>
+    <div class="hd-tags">
+      <span>☀️ Natureza</span>
+      <span>🎮 Jogos</span>
+      <span>🌱 Aprender</span>
+      <span>⭐ Divertido</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <span class="section-title">🎮 Escolhe o teu jogo!</span>
+
+  <!-- Games grid -->
+  <div class="games-grid">
+
+    <a class="game-card" href="https://vvarzea.github.io/VanBerto-s-O-Meu-dia/" target="_blank" rel="noopener">
+      <div class="game-icon">☀️</div>
+      <div class="game-title">O Meu Dia</div>
+      <div class="game-desc">Ordena as atividades do teu dia!</div>
+      <button class="play-btn">▶ Jogar</button>
+    </a>
+
+    <a class="game-card" href="https://vvarzea.github.io/VanBerto-sEsta-esdoano/"_blank" rel="noopener">
+      <div class="game-icon">🌸</div>
+      <div class="game-title">Estações do Ano</div>
+      <div class="game-desc">Descobre cada estação do ano!</div>
+      <button class="play-btn">▶ Jogar</button>
+    </a>
+
+    <a class="game-card" href="https://vvarzea.github.io/VanBerto-s-Como-Crescem-as-Plantas-/" target="_blank" rel="noopener">
+      <div class="game-icon">🌱</div>
+      <div class="game-title">Como Crescem as Plantas</div>
+      <div class="game-desc">Aprende sobre as plantas!</div>
+      <button class="play-btn">▶ Jogar</button>
+    </a>
+
+    <a class="game-card" href="https://vvarzea.github.io/VanBerto-s-Tarefas-de-Casa-/" target="_blank" rel="noopener">
+      <div class="game-icon">🏠</div>
+      <div class="game-title">Tarefas de Casa</div>
+      <div class="game-desc">Organiza as tarefas de casa!</div>
+      <button class="play-btn">▶ Jogar</button>
+    </a>
+
+  </div>
+
+  <!-- Robot below games, bubble on top -->
+  <div class="robot-wrap">
+    <div class="bubble" id="bubble">Olá! 😊 Vamos jogar?</div>
+    <svg id="robot-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-label="VanBerto - clica para falar comigo" role="button" tabindex="0">
+      <defs>
+        <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e5f2ff"/><stop offset="100%" stop-color="#bfdbfe"/></linearGradient>
+        <linearGradient id="visorGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient>
+      </defs>
+      <circle cx="40" cy="40" r="34" fill="rgba(147,197,253,0.35)"/>
+      <rect x="18" y="30" width="44" height="32" rx="14" fill="url(#bodyGrad)"/>
+      <circle cx="40" cy="46" r="7" fill="#9ca3af"/>
+      <rect x="22" y="10" width="36" height="26" rx="13" fill="url(#bodyGrad)"/>
+      <rect x="26" y="15" width="28" height="16" rx="8" fill="url(#visorGrad)"/>
+      <rect class="vb-eyelid" x="26" y="15" width="28" height="16" rx="8" fill="#e5f2ff" opacity="0.9"/>
+      <circle cx="33" cy="23" r="2.5" fill="#0f172a"/><circle cx="47" cy="23" r="2.5" fill="#0f172a"/>
+      <circle cx="34.2" cy="21.5" r="1" fill="white" opacity="0.8"/><circle cx="48.2" cy="21.5" r="1" fill="white" opacity="0.8"/>
+      <line x1="40" y1="10" x2="40" y2="4" stroke="#38bdf8" stroke-width="2"/><circle cx="40" cy="3" r="2.5" fill="#38bdf8"/>
+      <rect x="12" y="34" width="6" height="20" rx="3" fill="#e5e7eb"/>
+      <rect id="vb-arm" x="62" y="34" width="6" height="20" rx="3" fill="#e5e7eb"/>
+      <rect x="22" y="58" width="12" height="8" rx="3" fill="#1f2937"/><rect x="46" y="58" width="12" height="8" rx="3" fill="#1f2937"/>
+    </svg>
+  </div>
+
+  <p class="signature">© Professora Vanda Várzea</p>
+</main>
+
+<script>
+'use strict';
+
+const MSGS = [
+  'Olá! 😊 Vamos jogar?',
+  'Escolhe um jogo! 🎮',
+  'Qual é o teu favorito? ⭐',
+  'Vamos aprender a brincar! 🌟',
+  'Força! Consegues! 💪',
+  'Que jogo escolhes? 🎉',
+  'Estou aqui para ajudar! 🤖',
+];
+
+let mi = 0;
+let autoInterval = null;
+
+const GAME_MSGS = [
+  'Boa sorte! Vai a isso! 🚀',
+  'Consegues! Acredito em ti! 💪',
+  'Divirte-te! 🎉',
+  'Que aventura! 🌟',
+];
+
+function showBubble(msg) {
+  const el = document.getElementById('bubble');
+  const rb = document.getElementById('robot-svg');
+  el.textContent = msg;
+  rb.classList.remove('bounce');
+  void rb.offsetWidth;
+  rb.classList.add('bounce');
+
+}
+
+function nextMsg() {
+  mi = (mi + 1) % MSGS.length;
+  showBubble(MSGS[mi]);
+}
+
+function startAutoMsg() {
+  if (autoInterval) clearInterval(autoInterval);
+  autoInterval = setInterval(nextMsg, 5000);
+}
+
+function stopAutoMsg() {
+  if (autoInterval) {
+    clearInterval(autoInterval);
+    autoInterval = null;
+  }
+}
+
+document.getElementById('robot-svg').addEventListener('click', nextMsg);
+document.getElementById('robot-svg').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') nextMsg();
+});
+
+// Ao clicar num jogo: parar o intervalo e dizer mensagem de encorajamento
+document.querySelectorAll('.game-card').forEach(card => {
+  card.addEventListener('click', () => {
+    stopAutoMsg();
+    const msg = GAME_MSGS[Math.floor(Math.random() * GAME_MSGS.length)];
+    showBubble(msg);
+    // Retomar o intervalo após 6 segundos
+    setTimeout(startAutoMsg, 6000);
+  });
+});
+
+startAutoMsg();
+
+window.addEventListener('load', () => {
+  setTimeout(() => showBubble(MSGS[0]), 600);
+});
+</script>
+</body>
+</html>
