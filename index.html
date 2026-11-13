@@ -191,6 +191,22 @@ body.big .c{font-size:clamp(15px,4vw,18px);}body.big .ins{font-size:clamp(16px,4
 .qobj i{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#0abfa0;color:#fff;border-radius:50%;width:28px;height:28px;font:normal 16px/28px 'Fredoka One',cursive;text-align:center;border:2px solid #fff}
 .qopts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .qo{min-width:64px}.qo.okq{background:#d1fae5!important;border-color:#0abfa0!important}
+
+/* jogos de procura */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.qo{position:relative}
+.qo:has(.em,.lb,.sw){display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.1;min-width:84px;min-height:84px}
+.qo .em{font-size:clamp(38px,11vw,52px);line-height:1.05}
+.qo .lb{font-size:clamp(13px,3.6vw,17px)}
+.qo:has(.sw){padding:5px}
+.qo .sw{display:block;font-style:normal;background:var(--sw);color:#fff;border-radius:12px;padding:16px 12px;min-width:120px;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+.qo .em.sv svg{display:block;width:clamp(48px,13vw,62px);height:clamp(48px,13vw,62px)}
+.bigem svg{display:block;margin:0 auto;width:clamp(110px,32vw,140px);height:clamp(110px,32vw,140px)}
+.qo .sw.dk{color:var(--ink);text-shadow:none}
+.qo.okq{outline:4px solid var(--mint)}
+.word{font-family:'Fredoka One',cursive;font-size:clamp(30px,9vw,46px);color:var(--pc);letter-spacing:1px;text-align:center;text-shadow:0 2px 0 rgba(30,27,75,.18)}
+.bigem{font-size:clamp(84px,26vw,120px);line-height:1;text-align:center;filter:drop-shadow(0 4px 0 rgba(30,27,75,.2))}
+.cdot{width:clamp(96px,28vw,130px);height:clamp(96px,28vw,130px);border-radius:50%;border:4px solid var(--ink);box-shadow:0 5px 0 var(--ink);margin:0 auto}
 </style>
 </head>
 <body>
@@ -1378,11 +1394,84 @@ let qi=0,qn=0,qlk=0;
 const qs=()=>R.items[qi];
 function qshow(){const q=qs();qn=0;qlk=0;$('#qb').innerHTML='<div class="qwrap"><div class="qq">'+q.t+'</div>'+q.v+'<div class="qopts">'+q.o.map(([k,l])=>'<button class="btn big qo" data-k="'+k+'">'+l+'</button>').join('')+'</div></div>';if(O.guide){const b=P.querySelector('.qo[data-k="'+q.a+'"]');b&&b.classList.add('hintc');}vb(q.t.replace(/ 👆.*/,''));}
 function qans(b){if(qlk)return;const q=qs();if(b.dataset.k==q.a){qlk=1;b.classList.add('okq');done++;beep(660,.15);vb(q.ok,'happy');cnt();qi++;if(done==R.items.length)setTimeout(finish,1100);else setTimeout(qshow,1400);}
- else{if(!O.guide)err++;shake(b);beep(330,.35);vb(O.guide?'Vamos tentar este! 👉':pick(R.err||ERR));}}
+ else{if(!O.guide)err++;shake(b);beep(330,.35);q.w=(q.w||0)+1;vb(O.guide?'Vamos tentar este! 👉':(q.hint&&q.w%2==0?q.hint:pick(R.err||ERR)));}}
 function qcount(j){if(qlk||j.classList.contains('on'))return;j.classList.add('on');qn++;const i=document.createElement('i');i.textContent=qn;j.append(i);beep(880,.1);say(String(qn));if(qn==qs().n)setTimeout(()=>vb('Agora escolhe o número! 👇','happy'),900);}
 function qhint(){hn++;const b=P.querySelector('.qo[data-k="'+qs().a+'"]');if(!b)return;b.classList.add('hintc');vb('Olha para aqui! 💡');setTimeout(()=>b.classList.remove('hintc'),3200);}
 
-{const ORD=['rot','den','hig','emo','con','mai','rua','tra','rec','ali','com','rou','tar','viv','pla','dia','est','sem','hor'];GAMES.sort((x,y)=>ORD.indexOf(x.k)-ORD.indexOf(y.k));}
+/* ── Jogos de "procura" (Cores, Frutas, Legumes, Animais, Profissões, Roupa, Tempo) + extras para Transportes, Emoções, Estações e Habitats ── */
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const tk=(L,m)=>sh(L).slice(0,m);
+const mkI=a=>a.map(([n,e,ar,g])=>({n,e,a:ar,g}));
+const hnt=it=>it.hi?'Dica: pensa '+it.hi+'! 💡':'Dica: o nome começa pela letra '+it.n[0].toUpperCase()+'. 💡';
+const okm=it=>(it.ok||'É '+it.a+' '+it.n+'!')+' '+pick(OK);
+const opts=(L,it,n)=>sh([it,...sh(L.filter(x=>x!==it&&!(it.g&&x.g===it.g))).slice(0,n-1)]);
+const pic=x=>x.svg?'<span class="em sv">'+x.svg+'</span>':'<span class="em">'+x.e+'</span>';
+const LAB={
+ e:x=>pic(x)+'<span class="vh">'+x.n+'</span>',
+ en:x=>pic(x)+'<span class="lb">'+cap(x.n)+'</span>',
+ n:x=>'<span class="lb">'+cap(x.n)+'</span>',
+ sw:x=>'<i class="sw'+(x.dk?' dk':'')+'" style="--sw:'+x.col+'">'+x.n.toUpperCase()+'</i>'};
+const QR=(t,c,bg,ins,items)=>({quiz:1,t,c,bg,ins,items});
+const qFind=(L,n,lab)=>it=>({t:it.p||'Procura '+it.a+' '+it.n+'. 🔎',v:'<div class="word">'+(it.w||it.n).toUpperCase()+'</div>',o:opts(L,it,n).map(x=>[x.n,LAB[lab](x)]),a:it.n,hint:hnt(it),ok:okm(it)});
+const emv=x=>'<div class="bigem">'+(x.svg||x.e)+'</div>',dotv=x=>'<div class="cdot" style="background:'+x.col+'"></div>';
+const qRead=(L,n,q,vf)=>it=>({t:q,v:(vf||emv)(it),o:opts(L,it,n).map(x=>[x.n,LAB.n(x)]),a:it.n,hint:hnt(it),ok:okm(it)});
+const qAsk=(L,n,lab)=>([p,nm])=>{const it=L.find(x=>x.n==nm);return{t:p,v:'',o:opts(L,it,n).map(x=>[x.n,LAB[lab](x)]),a:nm,hint:hnt(it),ok:okm(it)};};
+const recGame=o=>({k:o.k,e:o.e,n:o.n,d:o.d,c:o.c,subs:[['facil','🌱 Fácil'],['completo','🌍 Completo']],rounds:s=>{
+ const f=s=='facil',lab=f?o.lf:o.lc,no=f?3:4,
+  r1=o.Q?tk(o.Q,f?6:10).map(qAsk(o.L,no,lab)):tk(o.L,f?6:8).map(qFind(o.L,no,lab)),
+  R1=QR(o.t,o.c,o.bg,o.ins,r1);
+ return f?[R1]:[R1,QR('📖 Lê e escolhe',o.c2,o.bg2,'Olha com atenção e escolhe o nome certo!',tk(o.L,6).map(qRead(o.L,4,o.q2,o.vf)))];}});
+const addR=(k,f)=>{const g=GAMES.find(x=>x.k==k),o=g.rounds;g.rounds=s=>o(s).concat(f(s));};
+
+/* dados */
+const COR=[['vermelho','#e74c3c','no morango'],['azul','#3498db','no mar'],['amarelo','#f1c40f','no sol'],['verde','#2ecc71','na relva'],['roxo','#9b59b6','nas uvas'],['laranja','#e67e22','na laranja'],['rosa','#ff6bcb','no algodão doce'],['castanho','#8e5b3c','no chocolate'],['preto','#000000','na noite'],['cinzento','#bdc3c7','nas nuvens de chuva']]
+ .map(([n,col,hi])=>({n,col,hi,dk:n=='amarelo'||n=='cinzento',p:'Procura o '+n+'. 🎨',ok:'Esta cor é o '+n+'!'}));
+const FRU=mkI([['maçã','🍎','a'],['banana','🍌','a'],['uvas','🍇','as'],['morango','🍓','o'],['melancia','🍉','a'],['ananás','🍍','o'],['kiwi','🥝','o'],['pêra','🍐','a'],['laranja','🍊','a'],['cerejas','🍒','as'],['limão','🍋','o'],['pêssego','🍑','o']]);
+const DOM=mkI([['cão','🐶','o'],['gato','🐱','o'],['coelho','🐰','o'],['galinha','🐔','a','ave'],['galo','🐓','o','ave'],['vaca','🐄','a'],['porco','🐖','o'],['ovelha','🐑','a'],['cabra','🐐','a'],['pato','🦆','o'],['cavalo','🐎','o'],['tartaruga','🐢','a'],['papagaio','🦜','o'],['peixe','🐟','o'],['hamster','🐹','o'],['peru','🦃','o']]);
+const SEL=mkI([['leão','🦁','o'],['tigre','🐯','o','felino'],['elefante','🐘','o'],['girafa','🦒','a'],['zebra','🦓','a'],['gorila','🦍','o'],['crocodilo','🐊','o'],['búfalo','🐃','o'],['rinoceronte','🦏','o'],['leopardo','🐆','o','felino'],['canguru','🦘','o']]);
+const PRO=mkI([['médico','🧑‍⚕️','o'],['bombeiro','👨‍🚒','o'],['cozinheiro','🧑‍🍳','o'],['carteiro','📮','o'],['professora','👩‍🏫','a'],['polícia','👮','o'],['motorista de ambulância','🚑','o'],['assistente de limpeza','🧹','a'],['mecânico','🧑‍🔧','o'],['agricultor','🧑‍🌾','o']]);
+PRO.find(x=>x.n=='carteiro').svg="<svg viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Carteiro\"><path d=\"M6 64 Q6 45 32 43 Q58 45 58 64Z\" fill=\"#d32f2f\" stroke=\"#9e1b1b\" stroke-width=\"1.5\"/><path d=\"M25 43 L32 54 L39 43Z\" fill=\"#fff\"/><rect x=\"27\" y=\"34\" width=\"10\" height=\"10\" fill=\"#e8b27a\"/><circle cx=\"32\" cy=\"26\" r=\"13\" fill=\"#f6c99a\" stroke=\"#c98f5a\" stroke-width=\"1.5\"/><circle cx=\"27\" cy=\"28\" r=\"1.9\" fill=\"#2b2b2b\"/><circle cx=\"37\" cy=\"28\" r=\"1.9\" fill=\"#2b2b2b\"/><circle cx=\"24\" cy=\"32\" r=\"2.4\" fill=\"#ff9a9a\" opacity=\".6\"/><circle cx=\"40\" cy=\"32\" r=\"2.4\" fill=\"#ff9a9a\" opacity=\".6\"/><path d=\"M27 33 Q32 38 37 33\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><path d=\"M18 24 Q18 8 32 8 Q46 8 46 24Z\" fill=\"#d32f2f\" stroke=\"#9e1b1b\" stroke-width=\"1.5\"/><rect x=\"16\" y=\"21\" width=\"34\" height=\"5\" rx=\"2.5\" fill=\"#b71c1c\"/><path d=\"M34 21 Q48 19 58 24 Q47 25 34 25Z\" fill=\"#9e1b1b\"/><path d=\"M12 64 L44 46\" stroke=\"#6d4c41\" stroke-width=\"4\" stroke-linecap=\"round\"/><rect x=\"40\" y=\"52\" width=\"20\" height=\"12\" rx=\"3\" fill=\"#a1887f\" stroke=\"#5d4037\" stroke-width=\"1.5\"/><rect x=\"2\" y=\"48\" width=\"20\" height=\"14\" rx=\"2\" fill=\"#fff\" stroke=\"#9e9e9e\" stroke-width=\"1.5\"/><path d=\"M2 48 L12 56 L22 48\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><rect x=\"15\" y=\"50\" width=\"5\" height=\"4\" fill=\"#d32f2f\"/></svg>";
+PRO.find(x=>x.n=='assistente de limpeza').svg="<svg viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Assistente de limpeza\"><path d=\"M6 64 Q6 45 32 43 Q58 45 58 64Z\" fill=\"#26a69a\" stroke=\"#00796b\" stroke-width=\"1.5\"/><path d=\"M25 43 L32 52 L39 43Z\" fill=\"#fff\"/><rect x=\"29\" y=\"54\" width=\"9\" height=\"7\" rx=\"1.5\" fill=\"#00897b\" stroke=\"#00695c\" stroke-width=\"1\"/><rect x=\"27\" y=\"35\" width=\"10\" height=\"9\" fill=\"#e8b27a\"/><circle cx=\"32\" cy=\"26\" r=\"13\" fill=\"#f6c99a\" stroke=\"#c98f5a\" stroke-width=\"1.5\"/><path d=\"M19 25 Q18 10 32 10 Q46 10 45 25 Q42 17 32 17 Q22 17 19 25Z\" fill=\"#5d4037\"/><circle cx=\"27\" cy=\"28\" r=\"1.9\" fill=\"#2b2b2b\"/><circle cx=\"37\" cy=\"28\" r=\"1.9\" fill=\"#2b2b2b\"/><circle cx=\"24\" cy=\"32\" r=\"2.4\" fill=\"#ff9a9a\" opacity=\".6\"/><circle cx=\"40\" cy=\"32\" r=\"2.4\" fill=\"#ff9a9a\" opacity=\".6\"/><path d=\"M27 33 Q32 38 37 33\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"8.5\" y=\"30\" width=\"3\" height=\"34\" rx=\"1.5\" fill=\"#a1887f\" stroke=\"#6d4c41\" stroke-width=\"1\"/><path d=\"M2 54 L18 54 L21 64 L-1 64Z\" fill=\"#f9a825\" stroke=\"#c17900\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/><path d=\"M6 56 L5 64 M10 56 L10 64 M14 56 L15 64\" stroke=\"#c17900\" stroke-width=\"1\"/><circle cx=\"10\" cy=\"49\" r=\"4.2\" fill=\"#ffee58\" stroke=\"#c9a800\" stroke-width=\"1.2\"/><path d=\"M44 49 L60 49 L57 64 L47 64Z\" fill=\"#42a5f5\" stroke=\"#1565c0\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/><path d=\"M45 49 Q52 40 59 49\" fill=\"none\" stroke=\"#546e7a\" stroke-width=\"1.6\" stroke-linecap=\"round\"/><ellipse cx=\"52\" cy=\"49\" rx=\"8\" ry=\"2\" fill=\"#bbdefb\" stroke=\"#1565c0\" stroke-width=\"1\"/><circle cx=\"49\" cy=\"46\" r=\"2.2\" fill=\"#fff\" stroke=\"#90caf9\"/><circle cx=\"55\" cy=\"44.5\" r=\"1.7\" fill=\"#fff\" stroke=\"#90caf9\"/><circle cx=\"52\" cy=\"42\" r=\"1.3\" fill=\"#fff\" stroke=\"#90caf9\"/><circle cx=\"52\" cy=\"58\" r=\"2\" fill=\"#fff\" opacity=\".6\"/></svg>";
+PRO.find(x=>x.n=='motorista de ambulância').svg="<svg viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"Motorista de ambul\u00e2ncia\"><path d=\"M6 64 Q6 45 32 43 Q58 45 58 64Z\" fill=\"#fff\" stroke=\"#bdbdbd\" stroke-width=\"1.5\"/><path d=\"M10 64 Q10 47 24 44 L28 64Z\" fill=\"#ff8f00\" stroke=\"#c56000\" stroke-width=\"1.2\"/><path d=\"M54 64 Q54 47 40 44 L36 64Z\" fill=\"#ff8f00\" stroke=\"#c56000\" stroke-width=\"1.2\"/><path d=\"M9 58 L27 58 M37 58 L55 58\" stroke=\"#e0e0e0\" stroke-width=\"3\"/><rect x=\"14\" y=\"48\" width=\"3\" height=\"9\" fill=\"#e53935\" transform=\"translate(1 0)\"/><rect x=\"11\" y=\"51\" width=\"9\" height=\"3\" fill=\"#e53935\" transform=\"translate(1 0)\"/><rect x=\"27\" y=\"34\" width=\"10\" height=\"10\" fill=\"#e8b27a\"/><circle cx=\"32\" cy=\"26\" r=\"13\" fill=\"#f6c99a\" stroke=\"#c98f5a\" stroke-width=\"1.5\"/><circle cx=\"27\" cy=\"28\" r=\"1.9\" fill=\"#2b2b2b\"/><circle cx=\"37\" cy=\"28\" r=\"1.9\" fill=\"#2b2b2b\"/><circle cx=\"24\" cy=\"32\" r=\"2.4\" fill=\"#ff9a9a\" opacity=\".6\"/><circle cx=\"40\" cy=\"32\" r=\"2.4\" fill=\"#ff9a9a\" opacity=\".6\"/><path d=\"M27 33 Q32 38 37 33\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><path d=\"M18 24 Q18 8 32 8 Q46 8 46 24Z\" fill=\"#fff\" stroke=\"#bdbdbd\" stroke-width=\"1.5\"/><rect x=\"16\" y=\"21\" width=\"34\" height=\"5\" rx=\"2.5\" fill=\"#e53935\"/><path d=\"M34 21 Q48 19 58 24 Q47 25 34 25Z\" fill=\"#c62828\"/><rect x=\"30\" y=\"10\" width=\"4\" height=\"10\" rx=\"1\" fill=\"#e53935\"/><rect x=\"27\" y=\"13\" width=\"10\" height=\"4\" rx=\"1\" fill=\"#e53935\"/></svg>";
+const PROQ=[['Quem trabalha no hospital e cuida das pessoas doentes?','médico'],['Quem apaga os fogos com uma mangueira?','bombeiro'],['Quem prepara a comida na cozinha?','cozinheiro'],['Quem entrega cartas e encomendas em nossa casa?','carteiro'],['Quem ensina os alunos na escola?','professora'],['Quem ajuda a manter a cidade segura e organiza o trânsito?','polícia'],['Quem conduz a ambulância até ao hospital?','motorista de ambulância'],['Quem limpa e deixa tudo arrumado e limpo?','assistente de limpeza'],['Quem repara carros e outras máquinas?','mecânico'],['Quem trabalha no campo a plantar e a cuidar das plantas e dos animais?','agricultor']];
+const ROP=mkI([['camisa','👔','a'],['t-shirt','👕','a'],['calças','👖','as'],['meias','🧦','as'],['sapatos','👟','os'],['casaco','🧥','o'],['chapéu de sol','👒','o'],['calções','🩳','os'],['luvas','🧤','as'],['cachecol','🧣','o'],['vestido','👗','o'],['chinelos','🩴','os']]);
+const ROPQ=[['Que peça de roupa tem colarinho e botões e, às vezes, usa-se com gravata?','camisa'],['Que peça de roupa de manga curta, sem botões, usamos na parte de cima do corpo?','t-shirt'],['O que usamos nas pernas, até aos pés, quando está fresco?','calças'],['O que usamos nos pés, por dentro dos sapatos?','meias'],['O que calçamos por cima das meias para andar na rua?','sapatos'],['O que vestimos quando está frio para tapar o corpo?','casaco'],['O que usamos na cabeça para nos tapar do sol?','chapéu de sol'],['O que usamos nas pernas no verão, quando está muito calor?','calções'],['O que usamos nas mãos quando está frio?','luvas'],['O que usamos no pescoço quando está muito frio?','cachecol'],['Que peça de roupa é uma só e vai dos ombros até aos joelhos?','vestido'],['O que calçamos na praia ou na piscina?','chinelos']];
+const LEG=mkI([['cenoura','🥕','a'],['batata','🥔','a'],['alface','🥬','a'],['brócolos','🥦','os'],['milho','🌽','o'],['pepino','🥒','o'],['beringela','🍆','a'],['cebola','🧅','a'],['pimento','🫑','o']]);
+const LEGQ=[['Qual é o legume comprido e laranja que os coelhos adoram?','cenoura'],['Qual é o legume que cresce debaixo da terra, é castanho por fora e serve para fazer batatas fritas?','batata'],['Qual é o legume que tem muitas folhas verdes e macias, enroladas umas nas outras?','alface'],['Qual é o legume verde que parece uma pequena árvore?','brócolos'],['Qual é o legume amarelo que vem numa espiga?','milho'],['Qual é o legume verde, comprido, com muita água, que se come às rodelas na salada?','pepino'],['Qual é o legume roxo que muitas vezes se grelha?','beringela'],['Qual é o legume que nos pode fazer chorar quando o cortamos?','cebola'],['Qual é o legume oco por dentro que pode ser verde, amarelo ou vermelho?','pimento']];
+const TEM=mkI([['sol','☀️','o'],['chuva','🌧️','a','chuva'],['trovoada','⛈️','a','chuva'],['arco-íris','🌈','o'],['neve','❄️','a'],['vento','💨','o'],['nuvens','☁️','as','nuvem'],['nevoeiro','🌫️','o','nuvem']]);
+
+GAMES.push(
+recGame({k:'cor',e:'🎨',n:'Jogo das Cores',d:'Procura a cor certa!',c:'#ef4444',bg:'#fff1f2',c2:'#3b82f6',bg2:'#eff6ff',t:'🎨 Procura a cor',ins:'Escolhe a cor que a pergunta pede!',L:COR,lf:'sw',lc:'sw',q2:'Que cor é esta? 🎨',vf:dotv}),
+recGame({k:'fru',e:'🍉',n:'Jogo das Frutas',d:'Procura a fruta certa!',c:'#f43f5e',bg:'#fff1f2',c2:'#f97316',bg2:'#fff7ed',t:'🍉 Procura a fruta',ins:'Lê o nome e escolhe a fruta certa!',L:FRU,lf:'en',lc:'e',q2:'Que fruta é esta? 🤔'}),
+recGame({k:'leg',e:'🥕',n:'Jogo dos Legumes',d:'Descobre o legume certo!',c:'#22c55e',bg:'#f0fdf4',c2:'#84cc16',bg2:'#f7fee7',t:'🥕 Descobre o legume',ins:'Lê a dica e escolhe o legume certo!',L:LEG,Q:LEGQ,lf:'en',lc:'en',q2:'Que legume é este? 🤔'}),
+recGame({k:'dom',e:'🐶',n:'Animais Domésticos',d:'Quem vive connosco em casa?',c:'#a16207',bg:'#fefce8',c2:'#16a34a',bg2:'#f0fdf4',t:'🐶 Procura o animal',ins:'Lê o nome e escolhe o animal certo!',L:DOM,lf:'en',lc:'e',q2:'Que animal é este? 🤔'}),
+recGame({k:'sel',e:'🦁',n:'Animais Selvagens',d:'Descobre os animais selvagens!',c:'#ea580c',bg:'#fff7ed',c2:'#ca8a04',bg2:'#fefce8',t:'🦁 Procura o animal',ins:'Lê o nome e escolhe o animal certo!',L:SEL,lf:'en',lc:'e',q2:'Que animal é este? 🤔'}),
+recGame({k:'pro',e:'👩‍🏫',n:'Profissões',d:'Quem faz cada trabalho?',c:'#0ea5e9',bg:'#f0f9ff',c2:'#6366f1',bg2:'#eef2ff',t:'👩‍🏫 Quem faz este trabalho?',ins:'Lê a pergunta e escolhe a profissão certa!',L:PRO,Q:PROQ,lf:'en',lc:'en',q2:'Qual é a profissão? 🤔'}),
+recGame({k:'tem',e:'🌦️',n:'Tempo Meteorológico',d:'Que tempo está a fazer?',c:'#38bdf8',bg:'#f0f9ff',c2:'#6366f1',bg2:'#eef2ff',t:'🌦️ Procura o tempo',ins:'Lê o nome e escolhe o tempo certo!',L:TEM,lf:'en',lc:'en',q2:'Que tempo é este? 🤔'})
+);
+
+/* Roupa: junta o "Jogo da Roupa" ao "Que Roupa Visto?" num só jogo */
+{const ropG=recGame({e:'👕',n:'Que Roupa Visto?',d:'O que vestimos em cada situação?',c:'#8b5cf6',bg:'#f5f3ff',c2:'#ec4899',bg2:'#fdf2f8',t:'👕 O que vestimos?',ins:'Lê a pergunta e escolhe a peça de roupa certa!',L:ROP,Q:ROPQ,lf:'en',lc:'en',q2:'Que peça de roupa é esta? 🤔'}),g=GAMES.find(x=>x.k=='rou'),o=g.rounds;
+ g.d='Nomes das roupas e roupa para cada tempo!';g.subs=[['facil','🌱 Fácil'],['completo','🌍 Completo']];
+ g.rounds=s=>{const a=o(),q=ropG.rounds(s);return s=='facil'?[q[0],a[0]]:[q[0],a[0],a[1],q[1]];};}
+
+/* extras nos jogos que já existiam */
+const TRN=mkI([['carro','🚗','o','carro'],['autocarro','🚌','o'],['carro dos bombeiros','🚒','o','carro'],['ambulância','🚑','a','carro'],['carro da polícia','🚓','o','carro'],['trator','🚜','o'],['bicicleta','🚲','a'],['mota','🛵','a'],['comboio','🚂','o'],['avião','✈️','o'],['barco','⛵','o'],['helicóptero','🚁','o']]);
+addR('tra',()=>[QR('🚗 Procura o transporte','#0ea5e9','#f0f9ff','Lê o nome e escolhe o transporte certo!',tk(TRN,8).map(qFind(TRN,4,'e')))]);
+
+const EMO=[['feliz','😀','alegre'],['triste','😢'],['zangado','😡'],['assustado','😱','espanto'],['com sono','😴'],['doente','🤒'],['apaixonado','😍','alegre'],['surpreso','😲','espanto']]
+ .map(([n,e,g])=>({n,e,g,p:'Procura quem está '+n+'. 🔎',ok:'Esta pessoa está '+n+'!'}));
+addR('emo',()=>[QR('😀 Quem está…?','#ec4899','#fdf2f8','Lê a pergunta e escolhe a cara certa!',tk(EMO,8).map(qFind(EMO,4,'e')))]);
+
+const S4=[['inverno','❄️','É no inverno!','em frio, chuva e lareira'],['outono','🍂','É no outono!','em folhas castanhas e castanhas assadas'],['primavera','🌸','É na primavera!','em flores e passarinhos'],['verão','☀️','É no verão!','em sol, calor e praia']].map(([n,e,ok,hi])=>({n,e,ok,hi}));
+const SQ=[['celebramos o Natal','inverno'],['cai neve na Serra da Estrela','inverno'],['temos os dias mais curtos e as noites mais compridas do ano','inverno'],['as folhas das árvores ficam amarelas e castanhas e começam a cair','outono'],['fazemos o magusto de São Martinho','outono'],['é a altura de apanhar as castanhas','outono'],['vemos flores a nascer nos campos','primavera'],['celebramos a Páscoa','primavera'],['as aves fazem ninhos e nascem passarinhos','primavera'],['temos as férias grandes da escola','verão'],['os dias são os mais compridos do ano e anoitece muito tarde','verão'],['comemos melancia e pêssegos fresquinhos','verão']];
+addR('est',s=>[QR('🗓️ Em que estação?','#f97316','#fff7ed','Lê a pergunta e escolhe a estação certa! (Em Portugal)',tk(SQ,s=='completo'?12:6).map(([x,k])=>qAsk(S4,4,'en')(['Em Portugal, normalmente, em que estação '+x+'? 🌍',k])))]);
+
+const HAB=mkI([['peixe','🐟','o'],['vaca','🐄','a'],['leão','🦁','o'],['pinguim','🐧','o'],['macaco','🐒','o'],['tartaruga','🐢','a'],['camelo','🐪','o'],['urso polar','🐻‍❄️','o']]);
+const HABQ=[['Que animal vive na água e respira pelas guelras?','peixe'],['Que animal vive na quinta e dá leite?','vaca'],['Que animal vive na savana e tem juba?','leão'],['Que animal vive no gelo da Antártida e não voa?','pinguim'],['Que animal vive nas árvores da floresta e adora bananas?','macaco'],['Que animal vive no mar e tem carapaça?','tartaruga'],['Que animal vive no deserto e tem bossas?','camelo'],['Que animal vive no gelo do Ártico?','urso polar']];
+addR('viv',s=>[QR('🐾 Quem vive aqui?','#16a34a','#f0fdf4','Lê a pergunta e escolhe o animal certo!',tk(HABQ,s=='facil'?6:8).map(qAsk(HAB,s=='facil'?3:4,'en')))]);
+
+{const ORD=['rot','den','hig','emo','cor','con','mai','fru','leg','rua','tra','dom','sel','rec','ali','com','pro','rou','tar','viv','tem','pla','dia','est','sem','hor'];GAMES.sort((x,y)=>ORD.indexOf(x.k)-ORD.indexOf(y.k));}
 let B={},snd=true,G,S,RS,ri,ST,R,err,hn,done,sel=null,drag=null,mood=null,ft,AC;
 let O={guide:false,calm:false,big:false};
 try{B=JSON.parse(localStorage.getItem('vbm')||'{}');snd=localStorage.getItem('vbs')!=='0';O=Object.assign(O,JSON.parse(localStorage.getItem('vbo')||'{}'));}catch(e){}
