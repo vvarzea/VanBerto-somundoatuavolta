@@ -178,6 +178,19 @@ body.big .c{font-size:clamp(15px,4vw,18px);}body.big .ins{font-size:clamp(16px,4
 .cf{position:fixed;top:-40px;font-style:normal;font-size:28px;z-index:300;pointer-events:none;animation:fall 2.2s linear forwards;}
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg);}}
 
+
+.qwrap{display:flex;flex-direction:column;gap:16px;align-items:center;width:100%}
+.qq{font-family:'Fredoka One',cursive;font-size:clamp(18px,5vw,24px);text-align:center;color:var(--ink,#1e293b)}
+.qgrid{display:flex;gap:10px;width:100%}
+.qgrp{flex:1;background:#fff;border:3px solid var(--pc);border-radius:22px;padding:10px 6px 12px;min-height:150px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.qgrp b{font-family:'Fredoka One',cursive;font-size:18px;color:var(--pc);font-weight:400}
+.qem{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:4px;flex:1;font-size:clamp(28px,9vw,40px);line-height:1}
+.qobjs{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;min-height:110px;align-items:center;background:#fff;border:3px solid var(--pc);border-radius:22px;padding:16px 10px;width:100%}
+.qobj{position:relative;font-size:clamp(44px,13vw,60px);line-height:1;border:3px solid transparent;border-radius:18px;padding:6px 8px;cursor:pointer;min-width:64px;min-height:64px;display:inline-flex;align-items:center;justify-content:center}
+.qobj.on{border-color:var(--pc);background:#fffbe6}
+.qobj i{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#0abfa0;color:#fff;border-radius:50%;width:28px;height:28px;font:normal 16px/28px 'Fredoka One',cursive;text-align:center;border:2px solid #fff}
+.qopts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.qo{min-width:64px}.qo.okq{background:#d1fae5!important;border-color:#0abfa0!important}
 </style>
 </head>
 <body>
@@ -1331,7 +1344,45 @@ GAMES.push(
  srt('🤒 Estou doente: boa ou má ideia?','#ef4444','#fef2f2','Isto é boa ideia? 🤔',[['boa','👍','Boa ideia','#22c55e'],['ma','👎','Má ideia','#ef4444']],[['Avisar um adulto','🙋','boa'],['Descansar em casa','🛏️','boa'],['Beber muita água','💧','boa'],['Espirrar para os amigos','🤧','ma'],['Esconder que me dói','🤐','ma'],['Partilhar o meu copo','🥤','ma']])]}
 );
 
-{const ORD=['rot','den','hig','emo','rua','rec','ali','rou','tar','pla','dia','est','sem','hor'];GAMES.sort((x,y)=>ORD.indexOf(x.k)-ORD.indexOf(y.k));}
+const spl=(L,n)=>Array.from({length:n},(_,k)=>{const seen={};return L.filter(x=>{const g=x[2];seen[g]=(seen[g]||0);return seen[g]++%n===k;});});
+const TRA=[['Carro','🚗','t','O carro anda na terra!'],['Autocarro','🚌','t','O autocarro anda na terra!'],['Comboio','🚂','t','O comboio anda na terra!'],['Bicicleta','🚲','t','A bicicleta anda na terra!'],['Mota','🏍️','t','A mota anda na terra!'],['Barco','⛵','a','O barco anda na água!'],['Navio','🚢','a','O navio anda na água!'],['Lancha','🛥️','a','A lancha anda na água!'],['Canoa','🛶','a','A canoa anda na água!'],['Barco a vapor','🛳️','a','O barco a vapor anda na água!'],['Avião','✈️','r','O avião voa no ar!'],['Helicóptero','🚁','r','O helicóptero voa no ar!'],['Avioneta','🛩️','r','A avioneta voa no ar!'],['Balão','🎈','r','O balão voa no ar!'],['Paraquedas','🪂','r','O paraquedas desce pelo ar!']];
+const VIV=[['Peixe palhaço','🐠','mar','O peixe palhaço vive no mar!'],['Polvo','🐙','mar','O polvo vive no mar!'],['Tubarão','🦈','mar','O tubarão vive no mar!'],['Golfinho','🐬','mar','O golfinho vive no mar!'],['Baleia','🐋','mar','A baleia vive no mar!'],['Raposa','🦊','flo','A raposa vive na floresta!'],['Lobo','🐺','flo','O lobo vive na floresta!'],['Coruja','🦉','flo','A coruja vive na floresta!'],['Esquilo','🐿️','flo','O esquilo vive na floresta!'],['Javali','🐗','flo','O javali vive na floresta!'],['Vaca','🐄','qui','A vaca vive na quinta!'],['Galinha','🐓','qui','A galinha vive na quinta!'],['Porco','🐖','qui','O porco vive na quinta!'],['Ovelha','🐑','qui','A ovelha vive na quinta!'],['Cavalo','🐴','qui','O cavalo vive na quinta!'],['Leão','🦁','sav','O leão vive na savana!'],['Elefante','🐘','sav','O elefante vive na savana!'],['Girafa','🦒','sav','A girafa vive na savana!'],['Zebra','🦓','sav','A zebra vive na savana!'],['Rinoceronte','🦏','sav','O rinoceronte vive na savana!']];
+const COM=[['Maçã','🍎','fru','A maçã é uma fruta!'],['Banana','🍌','fru','A banana é uma fruta!'],['Laranja','🍊','fru','A laranja é uma fruta!'],['Uvas','🍇','fru','As uvas são uma fruta!'],['Morango','🍓','fru','O morango é uma fruta!'],['Frango','🍗','pro','O frango é uma proteína!'],['Peixe','🐟','pro','O peixe é uma proteína!'],['Ovo','🥚','pro','O ovo é uma proteína!'],['Carne','🥩','pro','A carne é uma proteína!'],['Camarão','🦐','pro','O camarão é uma proteína!'],['Pão','🍞','cer','O pão é um cereal!'],['Massa','🍝','cer','A massa é um cereal!'],['Arroz','🍚','cer','O arroz é um cereal!'],['Cenoura','🥕','leg','A cenoura é um legume!'],['Brócolos','🥦','leg','Os brócolos são um legume!'],['Pepino','🥒','leg','O pepino é um legume!'],['Alface','🥬','leg','A alface é um legume!'],['Leite','🥛','lat','O leite é um laticínio!'],['Queijo','🧀','lat','O queijo é um laticínio!'],['Iogurte','🫙','lat','O iogurte é um laticínio!'],['Manteiga','🧈','lat','A manteiga é um laticínio!'],['Chocolate','🍫','doc','O chocolate é só para comer às vezes!'],['Gelado','🍨','doc','O gelado é só para comer às vezes!'],['Bolo','🎂','doc','O bolo é só para comer às vezes!'],['Rebuçado','🍬','doc','O rebuçado é só para comer às vezes!'],['Bolacha','🍪','doc','A bolacha é só para comer às vezes!']];
+const sf=(t,c,bg,q,B,L)=>({sort:1,t,c,bg,q,bins:B.map(([k,e,n,c])=>({k,e,n,c})),items:L.map(([n,e,s,f],i)=>({id:i,n,s,f,h:ic(e)}))});
+const BTRA=[['t','🛣️','Terra','#a16207'],['a','🌊','Água','#3b82f6'],['r','☁️','Ar','#06b6d4']];
+const BVIV=[['mar','🌊','Mar','#3b82f6'],['flo','🌲','Floresta','#16a34a'],['qui','🏡','Quinta','#f59e0b'],['sav','🌅','Savana','#ea580c']];
+const BCOM=[['fru','🍎','Fruta','#ef4444'],['pro','🍗','Proteínas','#b45309'],['cer','🍞','Cereais','#f59e0b'],['leg','🥦','Legumes','#22c55e'],['lat','🥛','Laticínios','#3b82f6'],['doc','🍫','Só às vezes','#ec4899']];
+const EV=['Peixe palhaço','Polvo','Raposa','Lobo','Vaca','Galinha','Leão','Elefante'],EC=['Maçã','Banana','Laranja','Frango','Peixe','Ovo','Cenoura','Brócolos','Alface'];
+GAMES.push(
+{k:'tra',e:'🚗',n:'Meios de Transporte',d:'Por onde anda cada transporte?',c:'#0ea5e9',rounds:()=>[
+ sf('🚦 Terra, água ou ar?','#0ea5e9','#f0f9ff','Por onde anda este transporte? 🤔',BTRA,TRA)]},
+{k:'viv',e:'🦁',n:'Onde Vivem?',d:'Cada animal no seu habitat!',c:'#16a34a',subs:[['facil','🌱 Fácil'],['completo','🌍 Completo']],
+ rounds:s=>s=='facil'?[sf('🐾 Onde vive?','#16a34a','#f0fdf4','Onde vive este animal? 🤔',BVIV,VIV.filter(x=>EV.includes(x[0])))]:spl(VIV,2).map((L,i)=>sf('🐾 Onde vive? ('+(i+1)+'/2)',i?'#ea580c':'#16a34a',i?'#fff7ed':'#f0fdf4','Onde vive este animal? 🤔',BVIV,L))},
+{k:'com',e:'🍽️',n:'O Que Como?',d:'A que grupo pertence cada alimento?',c:'#f97316',subs:[['facil','🌱 Fácil'],['completo','🌍 Completo']],
+ rounds:s=>s=='facil'?[sf('🥗 A que grupo pertence?','#f97316','#fff7ed','A que grupo pertence? 🤔',BCOM.filter(b=>['fru','pro','leg'].includes(b[0])),COM.filter(x=>EC.includes(x[0])))]:spl(COM,2).map((L,i)=>sf('🥗 A que grupo pertence? ('+(i+1)+'/2)',i?'#ec4899':'#f97316',i?'#fdf2f8':'#fff7ed','A que grupo pertence? 🤔',BCOM,L))}
+);
+
+const rb=(a,b)=>a+(Math.random()*(b-a+1)|0),spn=(n,e)=>Array(n).fill('<span>'+e+'</span>').join('');
+const MM=[{t:'🍎 Frutas',c:'#ef4444',bg:'#fff0f0',A:['🍎','🍊','🍋','🍇','🍓'],B:['🍌','🍑','🍒','🍐','🍉']},{t:'🐾 Animais',c:'#16a34a',bg:'#f0fff0',A:['🐱','🐶','🐸','🐷','🐮'],B:['🦊','🐻','🐼','🦁','🐯']},{t:'⭐ Estrelas e Formas',c:'#7c3aed',bg:'#f5f0ff',A:['⭐','🌟','💫'],B:['🔵','🔴','🟡','🟢','🟠']},{t:'🌸 Natureza',c:'#0284c7',bg:'#f0faff',A:['🌸','🌼','🌺','🌻','🌹'],B:['🌳','🌲','🌴','🌵','🎄']}];
+const CT=[{t:'🍎 Frutas',c:'#ef4444',bg:'#fff0f0',E:['🍎','🍊','🍋','🍇','🍓','🍌','🍑','🍒'],q:'Quantas frutas são?'},{t:'🐱 Animais',c:'#16a34a',bg:'#f0fff0',E:['🐱','🐶','🐸','🐷','🐮','🦊','🐻','🐼','🦁','🐯'],q:'Quantos animais são?'},{t:'⭐ Estrelas',c:'#7c3aed',bg:'#f5f0ff',E:['⭐','🌟','✨','💫'],q:'Quantas estrelas são?'},{t:'🔵 Bolhas de Cores',c:'#0284c7',bg:'#f0faff',E:['🔵','🔴','🟡','🟢','🟠','🟣','🟤'],q:'Quantas bolhas são?'}];
+const mmq=(p,k)=>{const mx=Math.min(8,2+(k*1.2|0)),l=rb(1,mx);let r=l;if(Math.random()>=.25)do r=rb(1,mx);while(r==l);const eL=pick(p.A),eR=pick(p.B),y=l>r?'>':l<r?'<':'=';
+ return{id:k,t:'Qual é o grupo que tem mais? 🤔',v:'<div class="qgrid"><div class="qgrp"><b>Grupo A</b><div class="qem">'+spn(l,eL)+'</div></div><div class="qgrp"><b>Grupo B</b><div class="qem">'+spn(r,eR)+'</div></div></div>',o:[['l','⬅️ A'],['e','⚖️ Iguais'],['r','B ➡️']],a:l>r?'l':l<r?'r':'e',ok:l+' '+y+' '+r+' — '+pick(OK)};};
+const ctq=(p,k,E)=>{const lo=Math.max(1,k*1.2|0),hi=Math.min(9,3+k*1.5|0),c=rb(lo,Math.max(lo,hi)),w=new Set();while(w.size<3){const x=rb(Math.max(1,c-3),Math.min(9,c+3));if(x!=c)w.add(x);}
+ return{id:k,t:p.q+' 👆 Toca em cada um!',n:c,v:'<div class="qobjs">'+Array(c).fill('<span class="qobj" role="button" tabindex="0">'+E+'</span>').join('')+'</div>',o:[...w,c].sort((a,b)=>a-b).map(n=>[n,n]),a:c,ok:c+'! '+pick(OK)};};
+const qr=(p,N,f,ins,mk)=>({quiz:1,t:p.t,c:p.c,bg:p.bg,ins,items:Array.from({length:N},(_,k)=>f(mk,k))});
+GAMES.push(
+{k:'con',e:'🔢',n:'Conta Comigo',d:'Toca, conta e escolhe o número!',c:'#f59e0b',rounds:()=>CT.map(p=>{const E=pick(p.E);return qr(p,5,(m,k)=>ctq(p,k,E),'Toca em cada objeto para contar. Depois escolhe o número certo!',0);})},
+{k:'mai',e:'⚖️',n:'Mais ou Menos?',d:'Qual é o grupo que tem mais?',c:'#8b5cf6',rounds:()=>MM.map(p=>qr(p,6,(m,k)=>mmq(p,k),'Qual dos dois grupos tem mais? Ou são iguais?',0))}
+);
+let qi=0,qn=0,qlk=0;
+const qs=()=>R.items[qi];
+function qshow(){const q=qs();qn=0;qlk=0;$('#qb').innerHTML='<div class="qwrap"><div class="qq">'+q.t+'</div>'+q.v+'<div class="qopts">'+q.o.map(([k,l])=>'<button class="btn big qo" data-k="'+k+'">'+l+'</button>').join('')+'</div></div>';if(O.guide){const b=P.querySelector('.qo[data-k="'+q.a+'"]');b&&b.classList.add('hintc');}vb(q.t.replace(/ 👆.*/,''));}
+function qans(b){if(qlk)return;const q=qs();if(b.dataset.k==q.a){qlk=1;b.classList.add('okq');done++;beep(660,.15);vb(q.ok,'happy');cnt();qi++;if(done==R.items.length)setTimeout(finish,1100);else setTimeout(qshow,1400);}
+ else{if(!O.guide)err++;shake(b);beep(330,.35);vb(O.guide?'Vamos tentar este! 👉':pick(R.err||ERR));}}
+function qcount(j){if(qlk||j.classList.contains('on'))return;j.classList.add('on');qn++;const i=document.createElement('i');i.textContent=qn;j.append(i);beep(880,.1);say(String(qn));if(qn==qs().n)setTimeout(()=>vb('Agora escolhe o número! 👇','happy'),900);}
+function qhint(){hn++;const b=P.querySelector('.qo[data-k="'+qs().a+'"]');if(!b)return;b.classList.add('hintc');vb('Olha para aqui! 💡');setTimeout(()=>b.classList.remove('hintc'),3200);}
+
+{const ORD=['rot','den','hig','emo','con','mai','rua','tra','rec','ali','com','rou','tar','viv','pla','dia','est','sem','hor'];GAMES.sort((x,y)=>ORD.indexOf(x.k)-ORD.indexOf(y.k));}
 let B={},snd=true,G,S,RS,ri,ST,R,err,hn,done,sel=null,drag=null,mood=null,ft,AC;
 let O={guide:false,calm:false,big:false};
 try{B=JSON.parse(localStorage.getItem('vbm')||'{}');snd=localStorage.getItem('vbs')!=='0';O=Object.assign(O,JSON.parse(localStorage.getItem('vbo')||'{}'));}catch(e){}
@@ -1353,6 +1404,7 @@ function choose(g){dock(0);G=g;H.hidden=true;P.hidden=false;P.style.setProperty(
 function start(g,s){G=g;S=s;RS=g.rounds(s);ri=0;ST=[];H.hidden=true;P.hidden=false;round();}
 function round(){dock(0);R=RS[ri];err=hn=done=0;sel=null;M.hidden=true;let pool=sh(R.items);if(!R.sort&&pool.every((x,i)=>x===R.items[i]))pool.reverse();
  P.style.setProperty('--pc',R.c);P.style.setProperty('--pb',R.bg);
+ if(R.quiz){qi=0;P.innerHTML='<div class="bar"><button class="btn" id="bk">←</button><div class="ttl">'+R.t+'</div><button class="btn" id="hi">💡</button><button class="btn" id="mu">'+(snd?'🔊':'🔇')+'</button></div><div class="pips">'+RS.map((_,i)=>'<i class="pip '+(i<ri?'ok':i==ri?'on':'')+'"></i>').join('')+'</div><div id="say"></div><div class="pbody"><p class="ins">'+R.ins+'<span id="cnt"></span></p><div id="qb"></div></div>';dock(1);cnt();scrollTo(0,0);qshow();return;}
  P.innerHTML='<div class="bar"><button class="btn" id="bk">←</button><div class="ttl">'+R.t+'</div><button class="btn" id="hi">💡</button><button class="btn" id="mu">'+(snd?'🔊':'🔇')+'</button></div><div class="pips">'+RS.map((_,i)=>'<i class="pip '+(i<ri?'ok':i==ri?'on':'')+'"></i>').join('')+'</div><div id="say"></div><div class="pbody"><p class="ins">'+(R.sort?'Toca no sítio certo para a carta. Também podes arrastar!':'Põe as cartas no número certo. Toca na carta e no número, ou arrasta!')+'<span id="cnt"></span></p><div class="slots'+(R.sort?' bins':'')+'"'+(R.sort&&R.bins.length<4?' style="grid-template-columns:repeat('+R.bins.length+',1fr)"':'')+'>'+(R.sort?R.bins.map(b=>'<div class="s bin" tabindex="0" data-b="'+b.k+'" style="--bc:'+b.c+'"><span class="ic">'+b.e+'</span><span>'+b.n+'</span><em>0</em></div>').join(''):R.items.map((_,i)=>'<div class="s" tabindex="0" data-i="'+i+'"><b>'+(i+1)+'</b></div>').join(''))+'</div><div class="cards'+(R.sort?' one':'')+'" id="pool">'+pool.map(c=>'<div class="c" tabindex="0" role="button" data-id="'+c.id+'">'+'<div class="im">'+c.h+'</div><span>'+c.n+'</span></div>').join('')+'</div></div>';
  dock(1);if(R.sort)setCur();cnt();guide();
  scrollTo(0,0);vb(R.q||'Qual é a ordem certa? 🤔');}
@@ -1374,7 +1426,7 @@ function hint(){if(done==R.items.length)return;hn++;let c,s;
  c.classList.add('hintc');s.classList.add('hint');vb('Olha para aqui! 💡');setTimeout(()=>{c.classList.remove('hintc');s.classList.remove('hint');},3200);}
 function finish(){const s=O.guide||err==0&&!hn?3:err<=2&&!hn?2:1;ST[ri]=s;fx();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.25),i*130));const last=ri==RS.length-1;
  vb(s==3?'Perfeito! Três estrelas! 🌟':'Muito bem! Continua! 🎉','happy');
- modal('<h2>'+'⭐'.repeat(s)+'☆'.repeat(3-s)+'</h2><p>'+(err?err+' erro(s) — ':'Sem erros! ')+R.t+' completo!</p>'+(R.sort?'':'<div class="rc">'+R.items.map((x,i)=>'<span>'+(i+1)+'. '+x.n+'</span>').join('')+'</div>')+'<button class="btn big" id="nx">'+(last?'Ver resultado 🏆':'Seguinte ▶')+'</button>');}
+ modal('<h2>'+'⭐'.repeat(s)+'☆'.repeat(3-s)+'</h2><p>'+(err?err+' erro(s) — ':'Sem erros! ')+R.t+' completo!</p>'+(R.sort||R.quiz?'':'<div class="rc">'+R.items.map((x,i)=>'<span>'+(i+1)+'. '+x.n+'</span>').join('')+'</div>')+'<button class="btn big" id="nx">'+(last?'Ver resultado 🏆':'Seguinte ▶')+'</button>');}
 function end(){const t=ST.reduce((a,b)=>a+b,0),m=RS.length*3,o=B[G.k];if(!o||t/m>=o.s/o.m)B[G.k]={s:t,m};try{localStorage.setItem('vbm',JSON.stringify(B));}catch(e){}
  fx();vb('Que campeão! 🏆','happy');modal('<h2>🏆</h2><p>Ganhaste ⭐ '+t+' de '+m+' estrelas!</p><button class="btn big" id="ag">Jogar outra vez</button> <button class="btn big" id="mn">Menu</button>');}
 function cfgModal(){const T=[['snd','🗣️ Ler em voz alta',snd],['guide','🧩 Ajuda automática (sem erros)',O.guide],['calm','🌿 Modo calmo (sem confetis nem abanões)',O.calm],['big','🔠 Letras e imagens maiores',O.big]];modal('<h2 style="font-size:30px">⚙️ Ajudas</h2><p>O professor escolhe o que ajuda o aluno.</p><div class="opts">'+T.map(([k,l,v])=>'<button class="btn big" data-o="'+k+'" aria-pressed="'+v+'" style="width:100%;'+(v?'':'background:#fff')+'">'+(v?'✅ ':'⬜ ')+l+'</button>').join('')+'<button class="btn big" id="mn">Fechar</button></div>');}
@@ -1382,8 +1434,8 @@ $('#cfg').addEventListener('click',cfgModal);
 M.addEventListener('click',e=>{const t=e.target;const o=t.closest('[data-o]');if(o){const k=o.dataset.o;if(k=='snd'){snd=!snd;try{localStorage.setItem('vbs',snd?'1':'0');}catch(x){}}else{O[k]=!O[k];try{localStorage.setItem('vbo',JSON.stringify(O));}catch(x){}applyO();}cfgModal();return;}if(t.id=='nx'){ri++;ri<RS.length?round():0;if(ri>=RS.length){ri--;end();}}if(t.id=='ag')G.subs&&!S?choose(G):start(G,S);if(t.id=='mn')hub();});
 P.addEventListener('click',e=>{const t=e.target;if(t.closest('#bk'))return hub();
  if(t.closest('#mu')){snd=!snd;try{localStorage.setItem('vbs',snd?'1':'0');}catch(x){}t.closest('#mu').textContent=snd?'🔊':'🔇';return;}
- if(t.closest('#hi'))return hint();const o=t.closest('[data-s]');if(o)return start(G,o.dataset.s);const s=t.closest('.s');if(s&&sel)drop(sel,s);});
-P.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const c=e.target.closest('.c'),s=e.target.closest('.s');if(c&&!c.classList.contains('used')){e.preventDefault();pickc(c);}else if(s&&sel){e.preventDefault();drop(sel,s);}});
+ if(t.closest('#hi'))return P.querySelector('#qb')?qhint():hint();if(P.querySelector('#qb')){const a=t.closest('.qo'),j=t.closest('.qobj');if(a)return qans(a);if(j)return qcount(j);return;}const o=t.closest('[data-s]');if(o)return start(G,o.dataset.s);const s=t.closest('.s');if(s&&sel)drop(sel,s);});
+P.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const qj=e.target.closest('.qobj');if(qj){e.preventDefault();qcount(qj);return;}const c=e.target.closest('.c'),s=e.target.closest('.s');if(c&&!c.classList.contains('used')){e.preventDefault();pickc(c);}else if(s&&sel){e.preventDefault();drop(sel,s);}});
 P.addEventListener('pointerdown',e=>{const c=e.target.closest('#pool .c');if(c&&!c.classList.contains('used'))drag={c,x:e.clientX,y:e.clientY,m:0};});
 addEventListener('pointermove',e=>{if(!drag)return;if(!drag.m&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){drag.m=1;drag.g=drag.c.cloneNode(true);drag.g.className='c ghost';document.body.append(drag.g);}if(drag.m){drag.g.style.left=e.clientX-52+'px';drag.g.style.top=e.clientY-60+'px';}});
 addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;if(d.m){d.g.remove();const t=document.elementFromPoint(e.clientX,e.clientY),s=t&&t.closest('.s');if(s)drop(d.c,s);}else pickc(d.c);});
