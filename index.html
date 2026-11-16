@@ -1509,7 +1509,7 @@ let bt;
 const PTN=['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze','treze','catorze','quinze','dezasseis','dezassete','dezoito','dezanove'],PTD=['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
 const numPT=(n,f)=>n<20?(f&&n==1?'uma':f&&n==2?'duas':PTN[n]):n<100?PTD[n/10|0]+(n%10?' e '+numPT(n%10,f):''):n==100?'cem':String(n);
 const LET={a:'á',b:'bê',c:'cê',d:'dê',e:'é',f:'éfe',g:'gê',h:'agá',i:'i',j:'jota',k:'cá',l:'éle',m:'ême',n:'éne',o:'ó',p:'pê',q:'quê',r:'érre',s:'ésse',t:'tê',u:'u',v:'vê',w:'dâblio',x:'xis',y:'ípsilon',z:'zê'};
-const DIC=[[/\bt-?shirts?\b/gi,'tíxérte'],[/\bkiwis?\b/gi,'quívi'],[/\bhalloween\b/gi,'hálouin'],[/\bhamsters?\b/gi,'âmster'],[/\bassoo\b/gi,'assôo'],[/\bxixi\b/gi,'chichi']];
+const DIC=[[/\b(\p{L}{3,})aste\b/giu,(m,p)=>p+'áchte'],[/\b(conseguiste|fizeste|descobriste|escolheste|estiveste|tiveste|puseste|disseste|soubeste|quiseste|ouviste|sentiste|partiste|aprendeste|escreveste|foste)\b/gi,m=>m.slice(0,-3)+'chte'],[/\bt-?shirts?\b/gi,'tíxérte'],[/\bkiwis?\b/gi,'quívi'],[/\bhalloween\b/gi,'hálouin'],[/\bhamsters?\b/gi,'âmster'],[/\bassoo\b/gi,'assôo'],[/\bxixi\b/gi,'chichi']];
 function ptSpeech(t){t=String(t==null?'':t);
  DIC.forEach(r=>{t=t.replace(r[0],r[1]);});
  t=t.replace(/\b(letras?|por)\s+([A-Z])(?![\p{L}\p{N}])/gu,(m,w,l)=>w+' '+LET[l.toLowerCase()]);
