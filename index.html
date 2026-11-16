@@ -1355,7 +1355,7 @@ GAMES.push(
 {k:'sem',e:'📅',n:'Dias da Semana e Meses',d:'Que dia vem a seguir?',c:'#6366f1',rounds:()=>[
  ord('📅 Os dias da semana','#6366f1','#eef2ff',DS.map((d,i)=>[d,DE[i]])),
  srt('🏫 Escola ou fim de semana?','#f59e0b','#fffbeb','Há escola nesse dia? 🤔',[['esc','🏫','Há escola','#3b82f6'],['fds','🌿','Fim de semana','#22c55e']],[['Segunda-feira','📚','esc'],['Terça-feira','✏️','esc'],['Quarta-feira','🎨','esc'],['Quinta-feira','🧩','esc'],['Sexta-feira','🎒','esc'],['Sábado','⚽','fds'],['Domingo','🌳','fds']]),
- srt('⏮️ Antes ou depois de quarta?','#ec4899','#fdf2f8','Vem antes ou depois da quarta-feira? 🤔',[['ant','⏮️','Antes','#ec4899'],['dep','⏭️','Depois','#8b5cf6']],[['Segunda-feira','1️⃣','ant'],['Terça-feira','2️⃣','ant'],['Quinta-feira','4️⃣','dep'],['Sexta-feira','5️⃣','dep'],['Sábado','6️⃣','dep']]),
+ srt('⏮️ Antes ou depois de quarta?','#ec4899','#fdf2f8','Vem antes ou depois da quarta-feira? 🤔',[['ant','⏮️','Antes','#ec4899'],['dep','⏭️','Depois','#8b5cf6']],[['Segunda-feira','📚','ant'],['Terça-feira','✏️','ant'],['Quinta-feira','🧩','dep'],['Sexta-feira','🎒','dep'],['Sábado','⚽','dep']]),
  ord('❄️ Os meses: janeiro a junho','#0ea5e9','#f0f9ff',[['Janeiro','❄️'],['Fevereiro','🎭'],['Março','🌱'],['Abril','🌦️'],['Maio','🌷'],['Junho','🎉']]),
  ord('☀️ Os meses: julho a dezembro','#f97316','#fff7ed',[['Julho','🏖️'],['Agosto','☀️'],['Setembro','🎒'],['Outubro','🍂'],['Novembro','🌰'],['Dezembro','🎄']])]},
 {k:'hor',e:'🕒',n:'Que Horas São?',d:'Aprende a ler o relógio!',c:'#0ea5e9',rounds:()=>[
@@ -1525,7 +1525,12 @@ try{pickVoice();if(speechSynthesis.addEventListener)speechSynthesis.addEventList
 function vzInfo(){if(VZ)return '🗣️ Voz: '+VZ.name+' ('+String(VZ.lang).replace('_','-')+')'+(/^pt[-_]PT$/i.test(VZ.lang)?'':' — português do Brasil, porque este aparelho não tem voz de Portugal.');return VZN?'⚠️ Este aparelho não tem voz em português, por isso não consegue ler em voz alta. Instala uma voz em Definições → Idioma / Voz.':'🗣️ A procurar vozes…';}
 function say(t){if(!snd)return;try{const x=ptSpeech(t);if(!x)return;if(!VZ)pickVoice();if(VZN&&!VZ)return;const go=()=>{const u=new SpeechSynthesisUtterance(x);u.lang=VZ?VZ.lang:'pt-PT';if(VZ)u.voice=VZ;u.rate=.88;speechSynthesis.speak(u);};clearTimeout(vzT);if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();vzT=setTimeout(go,70);}else go();}catch(e){}}
 /* sequências com mais de uma ordem possível: posições que se podem trocar */
-const EQ={'👕 Vestir-me':[[1,2,3]],'🚦 Atravessar a rua':[[1,2]],'🌙 Higiene e Dormir':[[1,2]],'☀️ Manhã':[[1,2]],'🌤️ Tarde':[[3,4]],'🌙 Noite':[[0,1]],'🌿 Manhã de fim de semana':[[1,2]],'🛒 Tarde de fim de semana':[[1,2,3,4]],'🌙 Noite de fim de semana':[[0,1]],'💌 Preparação':[[3,4]],'🚗 A caminho da festa':[[3,4]],'🎀 Depois da festa':[[2,3]]};
+const EQ={'👕 Vestir-me':[[1,2,3]],'🦷 Lavar os dentes':[[2,3]],'🌬️ Quando estou zangado':[[1,2],[3,4]],'🚦 Atravessar a rua':[[1,2]],
+ '🍽️ Tarefas de Cozinha':[[2,3]],'🌙 Higiene e Dormir':[[1,2]],
+ '🌻 O Girassol':[[1,2]],'🍎 A Macieira':[[1,2]],'🍅 O Tomateiro':[[1,2]],'🍓 O Morangueiro':[[1,2]],'🎃 A Abóbora':[[1,2]],
+ '☀️ Manhã':[[1,2,3]],'🌤️ Tarde':[[3,4]],'🌙 Noite':[[0,1]],
+ '🌿 Manhã de fim de semana':[[1,2,3]],'🛒 Tarde de fim de semana':[[1,2,3,4]],'🌙 Noite de fim de semana':[[0,1]],
+ '💌 Preparação':[[1,2,3,4]],'🚗 A caminho da festa':[[3,4]],'🎀 Depois da festa':[[2,3]]};
 const sameSlot=(a,b)=>a==b||!!(R.eq&&R.eq.some(g=>g.includes(a)&&g.includes(b)));
 const cardFor=si=>{const g=(R.eq&&R.eq.find(g=>g.includes(si)))||[si],ids=[R.items[si].id].concat(g.filter(i=>i!==si).map(i=>R.items[i].id));for(const id of ids){const c=P.querySelector('.c[data-id="'+id+'"]:not(.used)');if(c)return c;}return null;};
 function vb(m,f){document.body.classList.toggle('playing',!P.hidden);const b=$('#vbMsg');b.textContent=m;b.classList.remove('hide','pop');void b.offsetWidth;b.classList.add('pop');clearTimeout(bt);if(!P.hidden)bt=setTimeout(()=>b.classList.add('hide'),5200);face(f);say(m);}
